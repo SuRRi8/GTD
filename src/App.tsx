@@ -12,10 +12,11 @@ import { ProjectDetailPage } from './pages/ProjectDetailPage'
 import { ProjectsPage } from './pages/ProjectsPage'
 import { ReferencePage } from './pages/ReferencePage'
 import { WeeklyReviewPage } from './pages/review/WeeklyReviewPage'
+import { SettingsPage } from './pages/SettingsPage'
 import { SomedayPage } from './pages/SomedayPage'
 import { WaitingPage } from './pages/WaitingPage'
 import { MorePage } from './pages/MorePage'
-import { Placeholder } from './pages/Placeholder'
+import { NotFoundPage } from './pages/NotFoundPage'
 
 export function App() {
   return (
@@ -36,9 +37,9 @@ export function App() {
           <Route path="irgendwann" element={<SomedayPage />} />
           <Route path="referenz" element={<ReferencePage />} />
           <Route path="rueckblick" element={<WeeklyReviewPage />} />
-          <Route path="einstellungen" element={<Placeholder title="Einstellungen" />} />
+          <Route path="einstellungen" element={<SettingsPage />} />
           <Route path="mehr" element={<MorePage />} />
-          <Route path="*" element={<Placeholder title="Seite nicht gefunden" />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
