@@ -18,9 +18,12 @@ import { WaitingPage } from './pages/WaitingPage'
 import { MorePage } from './pages/MorePage'
 import { NotFoundPage } from './pages/NotFoundPage'
 
+// Bei Veröffentlichung in einem Unterpfad (GitHub Pages) beginnen alle Routen dort
+const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/'
+
 export function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Routes>
         <Route element={<AppShell />}>
           <Route index element={<HomePage />} />

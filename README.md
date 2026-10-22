@@ -1,5 +1,7 @@
 # GTD – Getting Things Done
 
+[![CI](https://github.com/SuRRi8/GTD/actions/workflows/ci.yml/badge.svg)](https://github.com/SuRRi8/GTD/actions/workflows/ci.yml)
+
 Eine Web-App, um die GTD-Methode von David Allen für Arbeit und Privatleben umzusetzen:
 **Erfassen → Klären → Organisieren → Durchsehen → Erledigen.**
 
@@ -28,7 +30,7 @@ Eine Web-App, um die GTD-Methode von David Allen für Arbeit und Privatleben umz
 
 ## Starten
 
-Voraussetzung: [Node.js](https://nodejs.org/) ab Version 20 (empfohlen: 22 LTS).
+Voraussetzung: [Node.js](https://nodejs.org/) ab Version 20.19 (empfohlen: 22 LTS, siehe `.nvmrc`).
 
 ```bash
 npm install        # einmalig: Abhängigkeiten installieren
@@ -77,11 +79,29 @@ Netzwerk → Firewall).
 
 ## Kostenlos online stellen
 
-Die App ist eine reine statische Website (Ordner `dist/`). Beide Anbieter sind für private Projekte
-kostenlos und liefern automatisch HTTPS – Voraussetzung für Offline-Betrieb und Installation.
-Die nötigen Einstellungen liegen schon im Projekt (`netlify.toml`, `vercel.json`).
+Die App ist eine reine statische Website (Ordner `dist/`). Alle Varianten sind kostenlos und liefern
+automatisch HTTPS – Voraussetzung für Offline-Betrieb und Installation. Die nötigen Einstellungen liegen
+schon im Projekt (`.github/workflows/pages.yml`, `netlify.toml`, `vercel.json`).
 
-### Variante A: Netlify per Drag & Drop (ohne Git, am schnellsten)
+### Variante A: GitHub Pages (direkt aus diesem Repository)
+
+Ein GitHub-Workflow baut die App und veröffentlicht sie unter **<https://surri8.github.io/GTD/>**.
+
+1. Auf GitHub im Repository: **Settings → Pages → Build and deployment → Source: „GitHub Actions“** wählen.
+2. **Actions → „GitHub Pages“ → Run workflow** → Branch auswählen → **Run workflow**.
+3. Nach etwa einer Minute ist die App unter der Adresse oben erreichbar (der Link steht auch im Workflow-Lauf).
+
+Danach veröffentlicht jeder Push auf `main` automatisch eine neue Version.
+
+Meldet der Lauf *„Branch … is not allowed to deploy to github-pages“*, unter
+**Settings → Environments → github-pages → Deployment branches** den Branch erlauben
+(standardmäßig darf nur der Standard-Branch veröffentlichen).
+
+Die App kommt dabei mit dem Unterpfad `/GTD/` zurecht: Der Workflow baut mit `BASE_PATH=/GTD/` und legt eine
+`404.html` an, damit auch Direktlinks wie `/GTD/projekte` funktionieren. Lokal ausprobieren:
+`BASE_PATH=/GTD/ npm run build`.
+
+### Variante B: Netlify per Drag & Drop (ohne Git)
 
 1. Lokal bauen: `npm run build`
 2. <https://app.netlify.com/drop> öffnen (kostenloses Konto anlegen).
@@ -91,7 +111,7 @@ Die nötigen Einstellungen liegen schon im Projekt (`netlify.toml`, `vercel.json
 
 Für ein Update erneut bauen und `dist` auf der Seite der Website unter *Deploys* hineinziehen.
 
-### Variante B: Netlify mit GitHub (automatische Updates)
+### Variante C: Netlify mit GitHub (automatische Updates)
 
 1. Bei <https://app.netlify.com> anmelden → **Add new site → Import an existing project → GitHub**.
 2. Dieses Repository wählen und den Branch, den du veröffentlichen willst (z. B. `main` oder den Entwicklungs-Branch).
@@ -99,7 +119,7 @@ Für ein Update erneut bauen und `dist` auf der Seite der Website unter *Deploys
 
 Jeder Push auf den Branch veröffentlicht automatisch eine neue Version.
 
-### Variante C: Vercel
+### Variante D: Vercel
 
 1. Bei <https://vercel.com/new> mit GitHub anmelden und das Repository importieren.
 2. Vercel erkennt Vite automatisch; `vercel.json` sorgt dafür, dass alle Seiten (z. B. `/projekte/…`) funktionieren.
@@ -152,6 +172,9 @@ an genau einer Stelle gewählt: `src/main.tsx`.
 **Tests:** Die Kernlogik ist mit Unit-Tests abgedeckt (`npm test`), u. a. alle Pfade des
 Klären-Ablaufs, die Stillstand-Erkennung, die Wiedervorlage, der Jetzt-Filter, Projekt-Aktivierung,
 Sicherung und das Repository (mit `fake-indexeddb`).
+
+**GitHub Actions:** `.github/workflows/ci.yml` prüft jeden Push und Pull Request (Lint, Tests, Typprüfung,
+Build). `.github/workflows/pages.yml` veröffentlicht auf GitHub Pages (siehe oben).
 
 ## Bewusst (noch) nicht enthalten
 
