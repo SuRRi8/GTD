@@ -19,6 +19,8 @@ export interface Collection<T extends BaseRecord> {
   update(id: string, changes: RecordChanges<T>): Promise<void>
   /** Weiches Löschen: setzt `deletedAt` */
   remove(id: string): Promise<void>
+  /** Macht ein weiches Löschen rückgängig */
+  restore(id: string): Promise<void>
 }
 
 export type Unsubscribe = () => void

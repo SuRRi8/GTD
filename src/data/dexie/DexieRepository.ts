@@ -42,7 +42,7 @@ class DexieCollection<T extends BaseRecord> implements Collection<T> {
 
   async add(data: NewRecord<T>): Promise<T> {
     const timestamp = this.now()
-    const record = { ...data, id: newId(), createdAt: timestamp, updatedAt: timestamp } as T
+    const record = { ...withoutUndefined(data), id: newId(), createdAt: timestamp, updatedAt: timestamp } as T
     await this.table.add(record)
     return record
   }
@@ -55,6 +55,15 @@ class DexieCollection<T extends BaseRecord> implements Collection<T> {
     const timestamp = this.now()
     await this.table.update(id, { deletedAt: timestamp, updatedAt: timestamp } as unknown as UpdateSpec<T>)
   }
+
+  async restore(id: string): Promise<void> {
+    await this.table.update(id, { deletedAt: undefined, updatedAt: this.now() } as unknown as UpdateSpec<T>)
+  }
+}
+
+/** Entfernt Felder mit `undefined`, damit gespeicherte Datensätze schlank bleiben */
+function withoutUndefined<T extends object>(data: T): T {
+  return Object.fromEntries(Object.entries(data).filter(([, value]) => value !== undefined)) as T
 }
 
 export class DexieRepository implements GtdRepository {

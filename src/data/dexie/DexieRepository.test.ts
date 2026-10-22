@@ -36,6 +36,9 @@ describe('DexieRepository', () => {
     expect(await repo.inbox.get(item.id)).toBeUndefined()
     const backup = await repo.exportAll()
     expect(backup.data.inbox[0].deletedAt).toBeDefined()
+
+    await repo.inbox.restore(item.id)
+    expect((await repo.inbox.list()).map((i) => i.text)).toEqual(['weg damit'])
   })
 
   it('macht Transaktionen bei einem Fehler vollständig rückgängig', async () => {
