@@ -89,7 +89,8 @@ export function SomedayList({ items }: { items: Project[] }) {
 function NewSomedaySheet({ onClose }: { onClose: () => void }) {
   const repo = useRepo()
   const [title, setTitle] = useState('')
-  const [area, setArea] = useState<Area>(useDefaultArea())
+  const defaultArea = useDefaultArea()
+  const [area, setArea] = useState<Area>(defaultArea)
 
   const save = async (event?: FormEvent) => {
     event?.preventDefault()
