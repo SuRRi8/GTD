@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router'
 import { AppShell } from './layout/AppShell'
+import { InboxPage } from './pages/InboxPage'
 import { MorePage } from './pages/MorePage'
 import { Placeholder } from './pages/Placeholder'
 
@@ -9,7 +10,7 @@ export function App() {
       <Routes>
         <Route element={<AppShell />}>
           <Route index element={<Placeholder title="Start" />} />
-          <Route path="eingang" element={<Placeholder title="Eingang" />} />
+          <Route path="eingang" element={<InboxPage />} />
           <Route path="klaeren" element={<Placeholder title="Klären" />} />
           <Route path="naechste-schritte" element={<Placeholder title="Nächste Schritte" />} />
           <Route path="jetzt" element={<Placeholder title="Jetzt" />} />

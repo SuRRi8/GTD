@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client'
 import { App } from './App'
 import { DataProvider } from './data/DataProvider'
 import { DexieRepository } from './data/dexie/DexieRepository'
+import { CaptureProvider } from './layout/CaptureProvider'
+import { FeedbackProvider } from './layout/FeedbackProvider'
 import { PrefsProvider } from './state/PrefsProvider'
 import './index.css'
 
@@ -13,7 +15,11 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <PrefsProvider>
       <DataProvider repository={repository}>
-        <App />
+        <FeedbackProvider>
+          <CaptureProvider>
+            <App />
+          </CaptureProvider>
+        </FeedbackProvider>
       </DataProvider>
     </PrefsProvider>
   </StrictMode>,

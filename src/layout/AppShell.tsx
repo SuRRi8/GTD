@@ -1,8 +1,9 @@
-import { Ellipsis, FolderKanban, Inbox, Zap } from 'lucide-react'
+import { Ellipsis, FolderKanban, Inbox, Plus, Zap } from 'lucide-react'
 import { Link, NavLink, Outlet } from 'react-router'
 import { CountBadge } from '../components/misc'
 import { useData } from '../data/hooks'
 import { visibleInbox } from '../domain/tickler'
+import { useCapture } from '../state/feedback'
 import { useToday } from '../state/useToday'
 import { AreaFilterControl } from './AreaFilterControl'
 import { NAV_ITEMS } from './nav'
@@ -23,10 +24,22 @@ function Logo() {
 
 function Sidebar() {
   const inboxCount = useInboxCount()
+  const { openCapture } = useCapture()
   return (
     <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-line bg-surface md:flex">
       <div className="px-5 pt-5 pb-4">
         <Logo />
+      </div>
+      <div className="px-3 pb-3">
+        <button
+          type="button"
+          onClick={openCapture}
+          className="flex min-h-11 w-full items-center gap-3 rounded-xl bg-accent px-3 font-medium text-on-accent transition hover:brightness-110"
+        >
+          <Plus size={20} />
+          <span className="flex-1 text-left">Erfassen</span>
+          <kbd className="rounded-md bg-white/20 px-1.5 text-xs font-semibold">N</kbd>
+        </button>
       </div>
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 pb-4" aria-label="Hauptnavigation">
         {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
