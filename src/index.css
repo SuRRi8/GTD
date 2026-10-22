@@ -1,0 +1,98 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Farben als Variablen, damit Hell- und Dunkelmodus dieselben Klassen nutzen */
+:root {
+  --canvas: #f6f5f1;
+  --surface: #ffffff;
+  --surface-2: #eeece6;
+  --ink: #1d2125;
+  --ink-muted: #5d646c;
+  --line: #e2dfd7;
+  --accent: #2c6b66;
+  --accent-soft: #e0eeec;
+  --on-accent: #ffffff;
+  --danger: #b42318;
+  --danger-soft: #fcebe9;
+  --warn: #8a5a00;
+  --warn-soft: #fbf1d9;
+  --ok: #2d7a3e;
+  --ok-soft: #e4f3e7;
+  --arbeit: #3a5f94;
+  --arbeit-soft: #e5edf8;
+  --privat: #8a4f7d;
+  --privat-soft: #f5e8f2;
+  color-scheme: light;
+}
+
+.dark {
+  --canvas: #15171a;
+  --surface: #1d2024;
+  --surface-2: #272b30;
+  --ink: #e7e5e1;
+  --ink-muted: #9ca3ab;
+  --line: #31363c;
+  --accent: #74bcb4;
+  --accent-soft: #1d3432;
+  --on-accent: #0d1a19;
+  --danger: #f4877c;
+  --danger-soft: #3b1f1c;
+  --warn: #e6b450;
+  --warn-soft: #382c12;
+  --ok: #7ccf8e;
+  --ok-soft: #1c3322;
+  --arbeit: #8fb3e8;
+  --arbeit-soft: #1f2b3d;
+  --privat: #dba3cf;
+  --privat-soft: #352433;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-arbeit: var(--arbeit);
+  --color-arbeit-soft: var(--arbeit-soft);
+  --color-privat: var(--privat);
+  --color-privat-soft: var(--privat-soft);
+}
+
+@theme {
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-canvas text-ink antialiased;
+    min-height: 100dvh;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 16px; /* verhindert Zoom auf iOS */
+  }
+}

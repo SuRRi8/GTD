@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#16181b" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="Getting Things Done – Erfassen, Klären, Organisieren, Durchsehen, Erledigen." />
+    <title>GTD</title>
+    <script>
+      // Theme vor dem ersten Rendern setzen, damit nichts aufblitzt.
+      try {
+        var t = JSON.parse(localStorage.getItem('gtd.theme') || 'null')
+        var dark = t === 'dunkel' || ((!t || t === 'system') && matchMedia('(prefers-color-scheme: dark)').matches)
+        if (dark) document.documentElement.classList.add('dark')
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
