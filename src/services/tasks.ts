@@ -1,5 +1,6 @@
+import { emptyProjectNotes } from '../data/defaults'
 import type { GtdRepository } from '../data/repository'
-import type { ProjectStatus } from '../data/types'
+import type { Area, NextAction, Project, ProjectStatus } from '../data/types'
 
 /** Hakt einen nächsten Schritt ab */
 export async function completeAction(repo: GtdRepository, actionId: string, now = new Date()): Promise<void> {
@@ -55,5 +56,45 @@ export async function deleteProject(repo: GtdRepository, projectId: string): Pro
       if (entry.projectId === projectId) await repo.calendar.update(entry.id, { projectId: undefined })
     }
     await repo.projects.remove(projectId)
+  })
+}
+
+export interface FirstAction {
+  title: string
+  contextId?: string
+  agendaPersonId?: string
+  minutes?: NextAction['minutes']
+  energy?: NextAction['energy']
+}
+
+/** Legt ein aktives Projekt an, optional gleich mit dem ersten nächsten Schritt */
+export async function createProject(
+  repo: GtdRepository,
+  data: { title: string; outcome: string; area: Area },
+  firstAction?: FirstAction,
+): Promise<Project> {
+  return repo.transaction(async () => {
+    const project = await repo.projects.add({ ...data, status: 'aktiv', notes: emptyProjectNotes() })
+    if (firstAction) await repo.actions.add({ ...firstAction, projectId: project.id, area: data.area })
+    return project
+  })
+}
+
+/** Irgendwann/Vielleicht → aktives Projekt; verlangt Ergebnis-Satz und einen nächsten Schritt */
+export async function activateProject(
+  repo: GtdRepository,
+  projectId: string,
+  outcome: string,
+  firstAction: FirstAction,
+): Promise<void> {
+  if (!outcome.trim()) throw new Error('Ein aktives Projekt braucht einen Ergebnis-Satz.')
+  if (!firstAction.title.trim() || !(firstAction.contextId || firstAction.agendaPersonId)) {
+    throw new Error('Ein aktives Projekt braucht einen nächsten Schritt mit Kontext.')
+  }
+  await repo.transaction(async () => {
+    const project = await repo.projects.get(projectId)
+    if (!project) throw new Error('Projekt nicht gefunden.')
+    await repo.projects.update(projectId, { status: 'aktiv', outcome: outcome.trim(), completedAt: undefined })
+    await repo.actions.add({ ...firstAction, title: firstAction.title.trim(), projectId, area: project.area })
   })
 }

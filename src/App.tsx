@@ -4,6 +4,9 @@ import { ClarifyPage } from './pages/clarify/ClarifyPage'
 import { EngagePage } from './pages/EngagePage'
 import { InboxPage } from './pages/InboxPage'
 import { NextActionsPage } from './pages/NextActionsPage'
+import { ProjectDetailPage } from './pages/ProjectDetailPage'
+import { ProjectsPage } from './pages/ProjectsPage'
+import { SomedayPage } from './pages/SomedayPage'
 import { MorePage } from './pages/MorePage'
 import { Placeholder } from './pages/Placeholder'
 
@@ -17,11 +20,12 @@ export function App() {
           <Route path="klaeren" element={<ClarifyPage />} />
           <Route path="naechste-schritte" element={<NextActionsPage />} />
           <Route path="jetzt" element={<EngagePage />} />
-          <Route path="projekte" element={<Placeholder title="Projekte" />} />
+          <Route path="projekte" element={<ProjectsPage />} />
+          <Route path="projekte/:id" element={<ProjectDetailPage />} />
           <Route path="warten" element={<Placeholder title="Warten auf" />} />
           <Route path="agenden" element={<Placeholder title="Agenden" />} />
           <Route path="kalender" element={<Placeholder title="Kalender" />} />
-          <Route path="irgendwann" element={<Placeholder title="Irgendwann/Vielleicht" />} />
+          <Route path="irgendwann" element={<SomedayPage />} />
           <Route path="referenz" element={<Placeholder title="Referenz" />} />
           <Route path="rueckblick" element={<Placeholder title="Wochenrückblick" />} />
           <Route path="einstellungen" element={<Placeholder title="Einstellungen" />} />
