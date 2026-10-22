@@ -1,7 +1,9 @@
 import { BrowserRouter, Route, Routes } from 'react-router'
 import { AppShell } from './layout/AppShell'
 import { ClarifyPage } from './pages/clarify/ClarifyPage'
+import { EngagePage } from './pages/EngagePage'
 import { InboxPage } from './pages/InboxPage'
+import { NextActionsPage } from './pages/NextActionsPage'
 import { MorePage } from './pages/MorePage'
 import { Placeholder } from './pages/Placeholder'
 
@@ -13,8 +15,8 @@ export function App() {
           <Route index element={<Placeholder title="Start" />} />
           <Route path="eingang" element={<InboxPage />} />
           <Route path="klaeren" element={<ClarifyPage />} />
-          <Route path="naechste-schritte" element={<Placeholder title="Nächste Schritte" />} />
-          <Route path="jetzt" element={<Placeholder title="Jetzt" />} />
+          <Route path="naechste-schritte" element={<NextActionsPage />} />
+          <Route path="jetzt" element={<EngagePage />} />
           <Route path="projekte" element={<Placeholder title="Projekte" />} />
           <Route path="warten" element={<Placeholder title="Warten auf" />} />
           <Route path="agenden" element={<Placeholder title="Agenden" />} />
