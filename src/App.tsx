@@ -3,6 +3,7 @@ import { AppShell } from './layout/AppShell'
 import { ClarifyPage } from './pages/clarify/ClarifyPage'
 import { CalendarPage } from './pages/CalendarPage'
 import { EngagePage } from './pages/EngagePage'
+import { HomePage } from './pages/HomePage'
 import { InboxPage } from './pages/InboxPage'
 import { NextActionsPage } from './pages/NextActionsPage'
 import { PeoplePage } from './pages/PeoplePage'
@@ -10,6 +11,7 @@ import { PersonPage } from './pages/PersonPage'
 import { ProjectDetailPage } from './pages/ProjectDetailPage'
 import { ProjectsPage } from './pages/ProjectsPage'
 import { ReferencePage } from './pages/ReferencePage'
+import { WeeklyReviewPage } from './pages/review/WeeklyReviewPage'
 import { SomedayPage } from './pages/SomedayPage'
 import { WaitingPage } from './pages/WaitingPage'
 import { MorePage } from './pages/MorePage'
@@ -20,7 +22,7 @@ export function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<AppShell />}>
-          <Route index element={<Placeholder title="Start" />} />
+          <Route index element={<HomePage />} />
           <Route path="eingang" element={<InboxPage />} />
           <Route path="klaeren" element={<ClarifyPage />} />
           <Route path="naechste-schritte" element={<NextActionsPage />} />
@@ -33,7 +35,7 @@ export function App() {
           <Route path="kalender" element={<CalendarPage />} />
           <Route path="irgendwann" element={<SomedayPage />} />
           <Route path="referenz" element={<ReferencePage />} />
-          <Route path="rueckblick" element={<Placeholder title="Wochenrückblick" />} />
+          <Route path="rueckblick" element={<WeeklyReviewPage />} />
           <Route path="einstellungen" element={<Placeholder title="Einstellungen" />} />
           <Route path="mehr" element={<MorePage />} />
           <Route path="*" element={<Placeholder title="Seite nicht gefunden" />} />

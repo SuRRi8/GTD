@@ -47,6 +47,13 @@ export function formatDate(date: LocalDate, today: LocalDate = todayLocal()): st
   return date.slice(0, 4) === today.slice(0, 4) ? dayMonth.format(d) : dayMonthYear.format(d)
 }
 
+const longDate = new Intl.DateTimeFormat('de-DE', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' })
+
+/** z. B. "Donnerstag, 22. Oktober" */
+export function formatLongDate(date: LocalDate): string {
+  return longDate.format(parseLocalDate(date))
+}
+
 /** "Heute", "Morgen", "Gestern" oder z. B. "Fr., 24. Okt." */
 export function formatDay(date: LocalDate, today: LocalDate = todayLocal()): string {
   const diff = daysBetween(today, date)
