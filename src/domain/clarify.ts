@@ -37,7 +37,14 @@ export interface ProjectDraft {
 export type NextStepDraft =
   | { kind: 'action'; contextId?: string; agendaPersonId?: string; minutes?: Minutes; energy?: Energy }
   | { kind: 'waiting'; personId: string; followUpOn?: LocalDate }
-  | { kind: 'calendar'; calendarKind: Exclude<CalendarKind, 'tagesinfo'>; date: LocalDate; time?: LocalTime }
+  | {
+      kind: 'calendar'
+      calendarKind: Exclude<CalendarKind, 'tagesinfo'>
+      date: LocalDate
+      time?: LocalTime
+      /** Direkt in Google Kalender eintragen statt im eigenen Kalender */
+      target?: 'google'
+    }
 
 export type NextStep = NextStepDraft & { title: string }
 
@@ -75,7 +82,7 @@ export type ClarifyEvent =
   | { type: 'PROJECT_NEXT'; choice: 'another' | 'later' }
   | { type: 'WHO'; answer: 'other' | 'calendar' | 'me' }
   | { type: 'DELEGATE'; personId: string; followUpOn?: LocalDate; title?: string }
-  | { type: 'SCHEDULE'; calendarKind: Exclude<CalendarKind, 'tagesinfo'>; date: LocalDate; time?: LocalTime }
+  | { type: 'SCHEDULE'; calendarKind: Exclude<CalendarKind, 'tagesinfo'>; date: LocalDate; time?: LocalTime; target?: 'google' }
   | { type: 'ASSIGN_CONTEXT'; contextId?: string; agendaPersonId?: string; minutes?: Minutes; energy?: Energy }
   | { type: 'CHOOSE_AREA'; area: Area }
   | { type: 'BACK' }
@@ -197,6 +204,7 @@ export function clarifyReducer(state: ClarifyState, event: ClarifyEvent): Clarif
           calendarKind: event.calendarKind,
           date: event.date,
           time: event.calendarKind === 'termin' ? event.time : undefined,
+          target: event.target,
         },
       })
 

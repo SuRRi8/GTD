@@ -47,6 +47,8 @@ export default defineConfig({
   ],
   test: {
     include: ['src/**/*.test.ts'],
+    // feste Zeitzone, damit Datums- und Uhrzeittests überall gleich laufen
+    env: { TZ: 'Europe/Berlin' },
     setupFiles: ['src/test/setup.ts'],
   },
 })

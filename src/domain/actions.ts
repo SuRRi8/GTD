@@ -1,8 +1,9 @@
 import type { AreaFilter, Context, NextAction, Person, Project } from '../data/types'
 import { sortContexts, sortPeople } from './sorting'
 
-export function filterByArea<T extends { area: string }>(items: T[], filter: AreaFilter): T[] {
-  return filter === 'alle' ? items : items.filter((item) => item.area === filter)
+/** Filtert nach Bereich; Einträge mit `anyArea` (z. B. gemeinsamer Kalender) gehören zu beiden */
+export function filterByArea<T extends { area: string; anyArea?: boolean }>(items: T[], filter: AreaFilter): T[] {
+  return filter === 'alle' ? items : items.filter((item) => item.area === filter || item.anyArea)
 }
 
 /**

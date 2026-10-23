@@ -80,6 +80,43 @@ describe('applyClarifyDecision', () => {
     expect(projects[0]).toMatchObject({ title: 'Tauchkurs', status: 'irgendwann', outcome: '' })
   })
 
+  it('trägt Termine direkt in Google ein – mit Projektbezug, ohne lokale Kopie', async () => {
+    const item = await repo.inbox.add({ text: 'Workshop' })
+    const created: unknown[] = []
+    const result = await applyClarifyDecision(
+      repo,
+      item.id,
+      {
+        kind: 'actionable',
+        area: 'arbeit',
+        project: { title: 'Workshop', outcome: 'gelaufen' },
+        doneActions: [],
+        next: { kind: 'calendar', title: 'Workshop mit Kunde', calendarKind: 'termin', date: '2026-11-03', time: '09:30', target: 'google' },
+      },
+      now,
+      { createExternalEvent: async (event) => void created.push(event) },
+    )
+    const { calendar, projects, inbox } = await repo.snapshot()
+    expect(calendar).toEqual([])
+    expect(inbox).toEqual([])
+    expect(result.projectId).toBe(projects[0].id)
+    expect(created).toEqual([{ title: 'Workshop mit Kunde', kind: 'termin', date: '2026-11-03', time: '09:30', area: 'arbeit', projectId: projects[0].id }])
+  })
+
+  it('speichert den Termin lokal, wenn Google nicht erreichbar ist', async () => {
+    const item = await repo.inbox.add({ text: 'Zahnarzt' })
+    const result = await applyClarifyDecision(
+      repo,
+      item.id,
+      { kind: 'actionable', area: 'privat', doneActions: [], next: { kind: 'calendar', title: 'Zahnarzt', calendarKind: 'termin', date: '2026-11-03', time: '08:15', target: 'google' } },
+      now,
+      { createExternalEvent: async () => Promise.reject(new Error('offline')) },
+    )
+    expect(result.calendarFallback).toBe(true)
+    expect((await repo.calendar.list())[0]).toMatchObject({ title: 'Zahnarzt', date: '2026-11-03', time: '08:15' })
+    expect(await repo.inbox.list()).toEqual([])
+  })
+
   it('löscht den Eintrag', async () => {
     const item = await repo.inbox.add({ text: 'Spam' })
     await applyClarifyDecision(repo, item.id, { kind: 'delete' }, now)

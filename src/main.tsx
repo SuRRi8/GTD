@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { App } from './App'
 import { DataProvider } from './data/DataProvider'
 import { DexieRepository } from './data/dexie/DexieRepository'
+import { GoogleCalendarProvider } from './integrations/google/GoogleCalendarProvider'
 import { CaptureProvider } from './layout/CaptureProvider'
 import { CompletionProvider } from './layout/CompletionProvider'
 import { FeedbackProvider } from './layout/FeedbackProvider'
@@ -23,13 +24,15 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <PrefsProvider>
       <DataProvider repository={repository}>
-        <FeedbackProvider>
-          <CompletionProvider>
-            <CaptureProvider>
-              <App />
-            </CaptureProvider>
-          </CompletionProvider>
-        </FeedbackProvider>
+        <GoogleCalendarProvider>
+          <FeedbackProvider>
+            <CompletionProvider>
+              <CaptureProvider>
+                <App />
+              </CaptureProvider>
+            </CompletionProvider>
+          </FeedbackProvider>
+        </GoogleCalendarProvider>
       </DataProvider>
     </PrefsProvider>
   </StrictMode>,

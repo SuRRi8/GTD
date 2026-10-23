@@ -169,6 +169,19 @@ describe('Klären: einzelner nächster Schritt', () => {
     expect(task.next).toEqual({ kind: 'calendar', calendarKind: 'tagesaufgabe', date: '2026-10-30', time: undefined })
   })
 
+  it('merkt sich, ob der Termin in Google eingetragen werden soll', () => {
+    const state = run('x', [
+      ...start,
+      { type: 'DEFINE_ACTION', title: 'Reifenwechsel in der Werkstatt' },
+      { type: 'TWO_MINUTES', answer: false },
+      { type: 'WHO', answer: 'calendar' },
+      { type: 'SCHEDULE', calendarKind: 'termin', date: '2026-10-30', time: '08:30', target: 'google' },
+      { type: 'CHOOSE_AREA', area: 'privat' },
+    ])
+    const decision = decisionOf(state)
+    expect(decision?.kind === 'actionable' && decision.next).toMatchObject({ kind: 'calendar', target: 'google' })
+  })
+
   it('wechselt bei abgelaufenem Timer zur Planung', () => {
     const state = run('x', [
       ...start,

@@ -56,4 +56,9 @@ describe('filterByArea', () => {
     expect(filterByArea(items, 'alle')).toHaveLength(2)
     expect(filterByArea(items, 'privat').map((a) => a.id)).toEqual(['b'])
   })
+
+  it('zeigt Einträge für beide Bereiche unter jedem Filter', () => {
+    const items = [{ id: 'gemeinsam', area: 'privat', anyArea: true }, { id: 'privat', area: 'privat' }]
+    expect(filterByArea(items, 'arbeit').map((a) => a.id)).toEqual(['gemeinsam'])
+  })
 })
