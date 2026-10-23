@@ -32,6 +32,8 @@ jobs:
         run: npm run build
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
+          # optional: Repository-Variable GOOGLE_CLIENT_ID für die Google-Kalender-Anbindung
+          VITE_GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID }}
       # GitHub Pages kennt keine Weiterleitungen: 404.html lädt die App auch bei Direktlinks
       - run: cp dist/index.html dist/404.html
       - uses: actions/configure-pages@v6

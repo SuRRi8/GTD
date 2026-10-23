@@ -22,7 +22,7 @@ Eine Web-App, um die GTD-Methode von David Allen für Arbeit und Privatleben umz
 | **Projekte** | Projekte ohne nächsten Schritt, ohne „Warten auf“ und ohne anstehenden Kalendereintrag stehen als **Stillstand** rot oben. Projektseite mit Ergebnis-Satz, Status und Notizen nach dem natürlichen Planungsmodell. |
 | **Warten auf** | Was, von wem, seit wann; optional Nachfass-Datum. Überfällige oben und hervorgehoben. |
 | **Agenden** | Pro Person: Gesprächspunkte und „Warten auf“. |
-| **Kalender** | Nur die „harte Landschaft“: Termine, Tagesaufgaben, Tagesinfos – heute und die nächsten 14 Tage. |
+| **Kalender** | Nur die „harte Landschaft“: Termine, Tagesaufgaben, Tagesinfos – heute und die nächsten 14 Tage. Optional mit den Terminen aus **Google Kalender**. |
 | **Irgendwann/Vielleicht** | Ideen mit „Aktivieren“ (verlangt Ergebnis-Satz und nächsten Schritt). |
 | **Referenz** | Notizen mit Titel, Text und Link, durchsuchbar. |
 | **Wochenrückblick** | Geführt in 9 Schritten (Klar werden, Auf Stand kommen, Kreativ werden) mit Trigger-Liste. Ist der letzte Rückblick mehr als 7 Tage her, erinnert die Startseite daran. |
@@ -138,6 +138,70 @@ Online-Adresse (HTTPS) auf dem Handy öffnen, dann:
 Danach startet die App wie eine normale App im Vollbild und funktioniert auch ohne Netz.
 Neue Versionen werden beim nächsten Öffnen automatisch übernommen.
 
+## Google Kalender verbinden (optional)
+
+Die App kann deine Google-Termine im Kalender, auf der Startseite und im Wochenrückblick anzeigen und neue
+Termine direkt in Google eintragen. Die Verbindung läuft **direkt vom Browser zu Google** – ohne Server
+dazwischen. Dafür brauchst du einmalig eine kostenlose „OAuth-Client-ID“ aus der Google Cloud (ca. 15 Minuten).
+
+### 1. Google-Cloud-Projekt anlegen
+
+1. <https://console.cloud.google.com> öffnen, mit deinem Google-Konto anmelden.
+2. Oben auf die Projektauswahl → **Neues Projekt** → Name z. B. „GTD“ → **Erstellen**, dann das Projekt auswählen.
+3. **APIs und Dienste → Bibliothek** → nach **„Google Calendar API“** suchen → **Aktivieren**.
+
+### 2. Anmeldung einrichten (Zustimmungsbildschirm)
+
+Der Menüpunkt heißt **„Google Auth Platform“** (früher „OAuth-Zustimmungsbildschirm“).
+
+1. **Branding** bzw. *Erste Schritte*: App-Name „GTD“, deine E-Mail als Support-Adresse.
+2. **Zielgruppe:** **Extern** wählen. Die App bleibt im Status *Testen* – das reicht für dich allein.
+3. Unter **Testnutzer** deine eigene Google-Adresse hinzufügen (nur Testnutzer können sich anmelden).
+
+### 3. Client-ID erstellen
+
+1. **Clients** (bzw. *Anmeldedaten*) → **Client erstellen** → Anwendungstyp **Webanwendung**.
+2. Unter **Autorisierte JavaScript-Quellen** eintragen – ohne Pfad und ohne Schrägstrich am Ende:
+   - `https://surri8.github.io` (GitHub Pages)
+   - `http://localhost:5173` (zum Entwickeln, optional)
+   - ggf. deine Netlify-/Vercel-Adresse, z. B. `https://dein-name.netlify.app`
+3. **Erstellen** und die **Client-ID** kopieren (endet auf `.apps.googleusercontent.com`).
+   Ein Client-Secret wird nicht gebraucht.
+
+Die genaue Quelle für das aktuelle Gerät zeigt die App auch unter *Einstellungen → Google Kalender* an.
+
+### 4. Client-ID in der App hinterlegen
+
+Entweder **einmal für alle Geräte** (empfohlen):
+
+- Auf GitHub: **Settings → Secrets and variables → Actions → Variables → New repository variable**,
+  Name `GOOGLE_CLIENT_ID`, Wert = die Client-ID. Danach den Workflow „GitHub Pages“ neu starten.
+- Lokal: Datei `.env.local` mit `VITE_GOOGLE_CLIENT_ID=…` anlegen (wird nicht eingecheckt).
+
+Oder **pro Gerät:** in der App unter *Einstellungen → Google Kalender* die Client-ID einfügen.
+
+### 5. Verbinden
+
+1. *Einstellungen → Google Kalender → **Mit Google verbinden***.
+2. Google-Konto wählen. Der Hinweis *„Google hat diese App nicht überprüft“* ist normal (deine eigene App im
+   Testmodus) → **Weiter** → Kalenderzugriff erlauben.
+3. Kalender auswählen und jeweils **Arbeit**, **Privat** oder **Beide** zuordnen – danach richtet sich der Bereichsfilter.
+4. Optional: **„Neue Termine aus der App eintragen in“** einen Kalender wählen. Dann landen Termine aus dem Klären
+   und dem Kalender direkt in Google (Dauer 1 Stunde). Bestehende Einträge lassen sich über „Nach Google
+   Kalender übertragen“ verschieben.
+
+### Gut zu wissen
+
+- **Verbindungsdauer:** Ohne Server gibt Google nur Zugriff für etwa eine Stunde. Danach zeigt die App den zuletzt
+  geladenen Stand (auch offline); **Aktualisieren** im Kalender öffnet kurz das Google-Fenster.
+- **Bearbeiten in Google:** Google-Termine sind in der App nur zu sehen. Ändern oder löschen in Google Kalender
+  („In Google Kalender öffnen“).
+- **Projekte:** Termine, die die App mit Projektbezug in Google anlegt, zählen als nächster Schritt – das Projekt
+  steht dann nicht im Stillstand.
+- **Nur über HTTPS oder localhost:** Über die WLAN-Adresse `http://192.168…` lässt Google keine Anmeldung zu.
+- **Datenschutz:** Die App fragt nur Kalenderrechte an. Das Zugriffstoken liegt nur im Sitzungsspeicher des Browsers,
+  die geladenen Termine auf dem Gerät. *Trennen* entzieht den Zugriff und löscht die Termine aus der App.
+
 ## Daten und Sicherung
 
 - Alle Daten liegen nur im Browser des jeweiligen Geräts (IndexedDB). Es gibt keine Synchronisierung.
@@ -159,6 +223,9 @@ src/
   components/  wiederverwendbare Bausteine (Dialoge, Listenzeilen, Auswahlfelder)
   layout/      App-Rahmen, Navigation, Erfassen, Rückmeldungen, Abhaken mit Projekt-Nachfrage
   pages/       eine Datei (oder ein Ordner) pro Ansicht
+  integrations/google/
+               Google Kalender: Anmeldung (Google Identity Services), Calendar-API,
+               Umrechnung der Termine, Provider mit Zwischenspeicher, Einstellungen
   state/       Geräte-Einstellungen (Bereichsfilter, Theme) in localStorage
 ```
 
@@ -169,16 +236,21 @@ Jeder Datensatz hat `id`, `createdAt`, `updatedAt` und `deletedAt` (gelöschte E
 Umsetzung der Schnittstelle ergänzen, ohne die Oberfläche umzubauen. Die konkrete Umsetzung wird
 an genau einer Stelle gewählt: `src/main.tsx`.
 
+**Google Kalender:** Google-Termine werden nicht in der Datenschicht gespeichert, sondern nur auf dem Gerät
+zwischengespeichert und beim Lesen dazugemischt (`usePlanningData`). Sicherung und Repository bleiben dadurch
+unabhängig von Google.
+
 **Tests:** Die Kernlogik ist mit Unit-Tests abgedeckt (`npm test`), u. a. alle Pfade des
 Klären-Ablaufs, die Stillstand-Erkennung, die Wiedervorlage, der Jetzt-Filter, Projekt-Aktivierung,
-Sicherung und das Repository (mit `fake-indexeddb`).
+Sicherung, das Repository (mit `fake-indexeddb`) sowie Umrechnung und API-Zugriff für Google Kalender.
 
 **GitHub Actions:** `.github/workflows/ci.yml` prüft jeden Push und Pull Request (Lint, Tests, Typprüfung,
 Build). `.github/workflows/pages.yml` veröffentlicht auf GitHub Pages (siehe oben).
 
 ## Bewusst (noch) nicht enthalten
 
-Synchronisierung zwischen Geräten, Login, Anbindung an Google-/Outlook-Kalender, E-Mail-Weiterleitung
+Synchronisierung zwischen Geräten, Login, Abgleich mit Google Kalender im Hintergrund (heute: Anzeige und Eintragen,
+solange die App offen ist), Outlook-Kalender, E-Mail-Weiterleitung
 in den Eingang, KI-Vorschläge beim Klären, Horizonte 2–5 (Verantwortungsbereiche, Ziele, Vision, Zweck),
 wiederverwendbare Checklisten, Benachrichtigungen. Das Datenmodell ist so angelegt, dass diese Punkte
 später als neue Tabellen bzw. Felder ergänzt werden können (Dexie-Schemaversionen).
