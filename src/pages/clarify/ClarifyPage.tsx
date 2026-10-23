@@ -8,6 +8,7 @@ import type { InboxItem } from '../../data/types'
 import { clarifyProgress, clarifyReducer, decisionOf, initClarify, type ClarifyStep } from '../../domain/clarify'
 import { formatDay, localDateOf } from '../../domain/dates'
 import { visibleInbox } from '../../domain/tickler'
+import { useGoogleCalendar } from '../../integrations/google/context'
 import { applyClarifyDecision, describeDecision } from '../../services/clarify'
 import { useFeedback } from '../../state/feedback'
 import { usePrefs } from '../../state/prefs'
@@ -85,6 +86,7 @@ function ClarifyFlow({ item }: { item: InboxItem }) {
   const today = useToday()
   const { lastArea, setLastArea } = usePrefs()
   const { toast } = useFeedback()
+  const { createEvent } = useGoogleCalendar()
   const [state, dispatch] = useReducer(clarifyReducer, undefined, () => initClarify(item.text, lastArea))
   const [saveError, setSaveError] = useState<string>()
   const saving = useRef(false)
@@ -94,10 +96,12 @@ function ClarifyFlow({ item }: { item: InboxItem }) {
     if (!decision || saving.current) return
     saving.current = true
     if ('area' in decision) setLastArea(decision.area)
-    applyClarifyDecision(repo, item.id, decision)
-      .then(() => {
+    applyClarifyDecision(repo, item.id, decision, new Date(), { createExternalEvent: createEvent })
+      .then((result) => {
         if (decision.kind === 'delete') {
           toast('Gelöscht', { actionLabel: 'Rückgängig', onAction: () => repo.inbox.restore(item.id) })
+        } else if (result.calendarFallback) {
+          toast('Google war nicht erreichbar – der Termin steht im Kalender der App.')
         } else {
           toast(describeDecision(decision))
         }
@@ -106,7 +110,7 @@ function ClarifyFlow({ item }: { item: InboxItem }) {
         saving.current = false
         setSaveError(String(error))
       })
-  }, [state, repo, item.id, setLastArea, toast])
+  }, [state, repo, item.id, setLastArea, toast, createEvent])
 
   const Step = state.step === 'finished' ? null : STEPS[state.step]
 

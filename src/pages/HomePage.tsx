@@ -3,7 +3,6 @@ import type { ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { Button } from '../components/Button'
 import { AreaBadge, Card } from '../components/misc'
-import { useData } from '../data/hooks'
 import { filterByArea } from '../domain/actions'
 import { entriesOnDay } from '../domain/calendar'
 import { daysBetween, formatDay, formatLongDate, formatSince, localDateOf } from '../domain/dates'
@@ -11,11 +10,12 @@ import { sortActiveProjects, stalledProjects } from '../domain/projects'
 import { visibleInbox } from '../domain/tickler'
 import { dueWaiting } from '../domain/waiting'
 import { daysSinceLastReview, isReviewDue, lastReview } from '../domain/weeklyReview'
+import { usePlanningData } from '../state/usePlanningData'
 import { usePrefs } from '../state/prefs'
 import { useToday } from '../state/useToday'
 
 export function HomePage() {
-  const data = useData()
+  const data = usePlanningData()
   const { areaFilter } = usePrefs()
   const today = useToday()
   const navigate = useNavigate()
@@ -71,7 +71,12 @@ export function HomePage() {
                   <span className="w-12 shrink-0 font-semibold tabular-nums">
                     {entry.kind === 'termin' ? entry.time : entry.kind === 'tagesaufgabe' ? 'Tag' : 'Info'}
                   </span>
-                  <span className="min-w-0 flex-1 break-words">{entry.title}</span>
+                  <span className="min-w-0 flex-1 break-words">
+                    {entry.external && (
+                      <span className="mr-1.5 inline-block size-2 rounded-full align-middle" style={{ backgroundColor: entry.external.color ?? 'currentColor' }} />
+                    )}
+                    {entry.title}
+                  </span>
                 </li>
               ))}
             </ul>

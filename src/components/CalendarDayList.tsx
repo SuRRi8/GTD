@@ -1,9 +1,10 @@
-import { Info } from 'lucide-react'
+import { CalendarDays, Info } from 'lucide-react'
 import { useState } from 'react'
 import { useRepo } from '../data/hooks'
-import type { CalendarEntry, LocalDate } from '../data/types'
-import type { CalendarDay } from '../domain/calendar'
+import type { LocalDate } from '../data/types'
+import type { CalendarDay, CalendarItem } from '../domain/calendar'
 import { formatDay } from '../domain/dates'
+import { GoogleEventSheet } from '../integrations/google/GoogleEventSheet'
 import { useFeedback } from '../state/feedback'
 import { usePrefs } from '../state/prefs'
 import { CheckButton } from './ActionRow'
@@ -33,7 +34,45 @@ export function CalendarDayList({ days, today, emptyToday }: { days: CalendarDay
   )
 }
 
-export function CalendarRow({ entry, today }: { entry: CalendarEntry; today: LocalDate }) {
+export function CalendarRow({ entry, today }: { entry: CalendarItem; today: LocalDate }) {
+  if (entry.external) return <GoogleCalendarRow entry={entry} today={today} />
+  return <OwnCalendarRow entry={entry} today={today} />
+}
+
+/** Termin aus Google: nur Anzeige, Tippen öffnet die Details */
+function GoogleCalendarRow({ entry, today }: { entry: CalendarItem; today: LocalDate }) {
+  const { areaFilter } = usePrefs()
+  const [open, setOpen] = useState(false)
+  const external = entry.external!
+  return (
+    <div className="flex items-center gap-1 py-1 pr-3 pl-1">
+      {entry.kind === 'termin' ? (
+        <span className="w-14 shrink-0 pl-3 text-sm font-semibold tabular-nums">{entry.time}</span>
+      ) : (
+        <span className="flex size-11 shrink-0 items-center justify-center text-ink-muted">
+          {entry.kind === 'tagesaufgabe' ? <CalendarDays size={18} /> : <Info size={18} />}
+        </span>
+      )}
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className={`min-w-0 flex-1 py-2 text-left break-words hover:text-accent ${entry.date < today ? 'text-ink-muted' : ''}`}
+      >
+        <span className="block">{entry.title}</span>
+        <span className="flex items-center gap-1.5 text-xs text-ink-muted">
+          <span className="inline-block size-2 shrink-0 rounded-full" style={{ backgroundColor: external.color ?? 'currentColor' }} />
+          {external.calendarName}
+          {external.endTime && ` · bis ${external.endTime}`}
+          {entry.kind === 'tagesaufgabe' && ' · Tagesaufgabe'}
+        </span>
+      </button>
+      {areaFilter === 'alle' && !entry.anyArea && <AreaBadge area={entry.area} />}
+      {open && <GoogleEventSheet item={entry} onClose={() => setOpen(false)} />}
+    </div>
+  )
+}
+
+function OwnCalendarRow({ entry, today }: { entry: CalendarItem; today: LocalDate }) {
   const repo = useRepo()
   const { toast } = useFeedback()
   const { areaFilter } = usePrefs()

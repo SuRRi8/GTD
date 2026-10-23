@@ -4,10 +4,11 @@ import { Button } from '../components/Button'
 import { CalendarDayList, CalendarRow } from '../components/CalendarDayList'
 import { CalendarEditor } from '../components/CalendarEditor'
 import { Card, PageHeader, SectionTitle } from '../components/misc'
-import { useData } from '../data/hooks'
+import { GoogleSyncBar } from '../integrations/google/GoogleSyncBar'
 import { filterByArea } from '../domain/actions'
 import { daysInRange, overdueDayTasks, upcomingDays } from '../domain/calendar'
 import { addDays } from '../domain/dates'
+import { usePlanningData } from '../state/usePlanningData'
 import { usePrefs } from '../state/prefs'
 import { useToday } from '../state/useToday'
 
@@ -15,7 +16,7 @@ const DAYS = 14
 
 /** Nur die „harte Landschaft“: heute und die nächsten 14 Tage */
 export function CalendarPage() {
-  const { calendar } = useData()
+  const { calendar } = usePlanningData()
   const { areaFilter } = usePrefs()
   const today = useToday()
   const [creating, setCreating] = useState(false)
@@ -38,6 +39,8 @@ export function CalendarPage() {
           </Button>
         }
       />
+
+      <GoogleSyncBar showSetupHint />
 
       {overdue.length > 0 && (
         <section className="mb-4">

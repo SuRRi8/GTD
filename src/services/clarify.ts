@@ -149,7 +149,7 @@ export function describeDecision(decision: ClarifyDecision): string {
       const prefix = decision.project ? 'Projekt angelegt · ' : ''
       if (!decision.next) return decision.project ? 'Projekt angelegt' : 'Erledigt'
       if (decision.next.kind === 'waiting') return `${prefix}Auf „Warten auf“ gesetzt`
-      if (decision.next.kind === 'calendar') return `${prefix}Im Kalender eingetragen`
+      if (decision.next.kind === 'calendar') return `${prefix}${decision.next.target === 'google' ? 'In Google Kalender eingetragen' : 'Im Kalender eingetragen'}`
       return `${prefix}Nächster Schritt angelegt`
     }
   }

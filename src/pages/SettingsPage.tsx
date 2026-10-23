@@ -8,6 +8,7 @@ import { BackupError, parseBackup } from '../data/backup'
 import { buildDemoData } from '../data/demoData'
 import { useData, useRepo } from '../data/hooks'
 import { COLLECTION_NAMES } from '../data/types'
+import { GoogleSettingsSection } from '../integrations/google/GoogleSettingsSection'
 import { todayLocal } from '../domain/dates'
 import { sortContexts, sortPeople } from '../domain/sorting'
 import { addContext, moveContext } from '../services/settings'
@@ -36,6 +37,7 @@ export function SettingsPage() {
 
       <ContextSettings />
       <PeopleSettings />
+      <GoogleSettingsSection />
       <DataSettings />
 
       <p className="mt-8 px-1 text-sm text-ink-muted">

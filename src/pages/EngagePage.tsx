@@ -5,12 +5,12 @@ import { Button } from '../components/Button'
 import { ChoiceChips, MultiChips } from '../components/Chips'
 import { Field } from '../components/forms'
 import { Card, EmptyState, PageHeader, SectionTitle } from '../components/misc'
-import { useData } from '../data/hooks'
 import type { Energy, Minutes } from '../data/types'
 import { activeActions, filterByArea, groupByContext } from '../domain/actions'
 import { entriesOnDay } from '../domain/calendar'
 import { AGENDA_FILTER, engageActions, type EngageFilter } from '../domain/engage'
 import { sortContexts } from '../domain/sorting'
+import { usePlanningData } from '../state/usePlanningData'
 import { usePrefs } from '../state/prefs'
 import { usePersistentState } from '../state/storage'
 import { useToday } from '../state/useToday'
@@ -22,7 +22,7 @@ const isEngageFilter = (v: unknown): v is EngageFilter =>
 
 /** Jetzt-Ansicht: Kontext, Zeit und Energie wählen – die Entscheidung triffst du selbst. */
 export function EngagePage() {
-  const data = useData()
+  const data = usePlanningData()
   const { areaFilter } = usePrefs()
   const today = useToday()
   const [filter, setFilter] = usePersistentState<EngageFilter>('gtd.engageFilter', EMPTY_FILTER, isEngageFilter)

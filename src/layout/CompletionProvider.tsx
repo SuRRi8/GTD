@@ -9,6 +9,7 @@ import type { NextAction, Project, WaitingFor } from '../data/types'
 import { countOpenItems, openItemsOf } from '../domain/projects'
 import { completeAction, completeWaiting, reopenAction, reopenWaiting, setProjectStatus } from '../services/tasks'
 import { CompletionContext, useFeedback, type Completion } from '../state/feedback'
+import { usePlanningData } from '../state/usePlanningData'
 import { useToday } from '../state/useToday'
 
 /**
@@ -57,7 +58,7 @@ export function CompletionProvider({ children }: { children: ReactNode }) {
 
 function ProjectFollowUp({ project, onClose }: { project: Project; onClose: () => void }) {
   const repo = useRepo()
-  const data = useData()
+  const data = usePlanningData()
   const today = useToday()
   const { toast } = useFeedback()
   const [mode, setMode] = useState<'choose' | 'next'>('choose')

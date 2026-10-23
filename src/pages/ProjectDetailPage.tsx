@@ -17,6 +17,7 @@ import { formatDay, localDateOf } from '../domain/dates'
 import { countOpenItems, isStalled, openItemsOf } from '../domain/projects'
 import { deleteProject, setProjectStatus } from '../services/tasks'
 import { useFeedback } from '../state/feedback'
+import { usePlanningData } from '../state/usePlanningData'
 import { useToday } from '../state/useToday'
 
 const STATUS_OPTIONS: { value: ProjectStatus; label: string }[] = [
@@ -56,7 +57,7 @@ function BackLink({ to = '/projekte', label = 'Projekte' }: { to?: string; label
 }
 
 function ProjectDetail({ project }: { project: Project }) {
-  const data = useData()
+  const data = usePlanningData()
   const repo = useRepo()
   const today = useToday()
   const navigate = useNavigate()

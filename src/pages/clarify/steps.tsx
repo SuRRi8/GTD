@@ -22,6 +22,7 @@ import type { Area, Energy, LocalDate, LocalTime, Minutes } from '../../data/typ
 import type { ClarifyEvent, ClarifyState } from '../../domain/clarify'
 import { addDays } from '../../domain/dates'
 import { ACTION_EXAMPLES, ACTION_VERBS } from '../../domain/nextActionHint'
+import { useGoogleCalendar } from '../../integrations/google/context'
 
 export interface StepProps {
   state: ClarifyState
@@ -479,7 +480,19 @@ export function ScheduleStep({ state, dispatch, today }: StepProps) {
   const [kind, setKind] = useState<'termin' | 'tagesaufgabe'>(previous?.calendarKind ?? 'termin')
   const [date, setDate] = useState<LocalDate | undefined>(previous?.date)
   const [time, setTime] = useState<LocalTime>(previous?.time ?? '')
+  const google = useGoogleCalendar()
+  const googleTarget = google.connected ? google.writeCalendar : undefined
+  const [toGoogle, setToGoogle] = useState(previous ? previous.target === 'google' : Boolean(googleTarget))
   const valid = Boolean(date) && (kind === 'tagesaufgabe' || Boolean(time))
+
+  const submit = () => {
+    if (!date) return
+    const target = toGoogle && googleTarget ? 'google' : undefined
+    // Berechtigung schon jetzt (im Klick) holen – gespeichert wird erst nach der Bereichswahl
+    if (target) google.ensureToken({ interactive: true, write: true }).catch(() => undefined)
+    dispatch({ type: 'SCHEDULE', calendarKind: kind, date, time: time || undefined, target })
+  }
+
   return (
     <Question title="Wann?" hint="Nur, wenn es wirklich an diesen Tag gebunden ist.">
       <Segmented
@@ -506,14 +519,14 @@ export function ScheduleStep({ state, dispatch, today }: StepProps) {
           <TextInput id="schedule-time" type="time" value={time} onChange={(e) => setTime(e.target.value)} />
         </Field>
       )}
+      {googleTarget && (
+        <label className="flex min-h-11 items-center gap-3 rounded-xl bg-surface-2 px-3 py-2">
+          <input type="checkbox" className="size-5 accent-[var(--accent)]" checked={toGoogle} onChange={(e) => setToGoogle(e.target.checked)} />
+          <span>In Google Kalender „{googleTarget.name}“ eintragen</span>
+        </label>
+      )}
       <ErrorText error={state.error} />
-      <Button
-        variant="primary"
-        size="lg"
-        block
-        disabled={!valid}
-        onClick={() => date && dispatch({ type: 'SCHEDULE', calendarKind: kind, date, time: time || undefined })}
-      >
+      <Button variant="primary" size="lg" block disabled={!valid} onClick={submit}>
         Weiter <ArrowRight size={18} />
       </Button>
     </Question>

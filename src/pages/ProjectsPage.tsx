@@ -4,17 +4,17 @@ import { Link } from 'react-router'
 import { Button } from '../components/Button'
 import { AreaBadge, Card, EmptyState, PageHeader, SectionTitle } from '../components/misc'
 import { NewProjectSheet } from '../components/ProjectSheets'
-import { useData } from '../data/hooks'
 import type { Project } from '../data/types'
 import { filterByArea } from '../domain/actions'
 import { formatDate, localDateOf } from '../domain/dates'
 import { isStalled, openItemsOf, sortActiveProjects } from '../domain/projects'
 import { compareText } from '../domain/sorting'
+import { usePlanningData } from '../state/usePlanningData'
 import { usePrefs } from '../state/prefs'
 import { useToday } from '../state/useToday'
 
 export function ProjectsPage() {
-  const data = useData()
+  const data = usePlanningData()
   const { areaFilter } = usePrefs()
   const today = useToday()
   const [creating, setCreating] = useState(false)
@@ -105,7 +105,7 @@ export function ProjectsPage() {
 }
 
 function ProjectRow({ project, stalled }: { project: Project; stalled?: boolean }) {
-  const data = useData()
+  const data = usePlanningData()
   const today = useToday()
   const { areaFilter } = usePrefs()
   const open = openItemsOf(project.id, data, today)

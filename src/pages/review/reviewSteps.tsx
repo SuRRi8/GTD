@@ -21,6 +21,8 @@ import { TRIGGER_LISTS } from '../../domain/triggers'
 import { sortWaiting } from '../../domain/waiting'
 import { setProjectStatus } from '../../services/tasks'
 import { useCapture, useFeedback } from '../../state/feedback'
+import { GoogleSyncBar } from '../../integrations/google/GoogleSyncBar'
+import { usePlanningData } from '../../state/usePlanningData'
 import { useToday } from '../../state/useToday'
 import { SomedayList } from '../SomedayPage'
 import { WaitingList } from '../WaitingPage'
@@ -137,12 +139,13 @@ export function ActionsStep() {
 }
 
 export function CalendarStep() {
-  const { calendar } = useData()
+  const { calendar } = usePlanningData()
   const today = useToday()
   const past = daysInRange(calendar, addDays(today, -14), addDays(today, -1)).reverse()
   const future = daysInRange(calendar, today, addDays(today, 28))
   return (
     <div>
+      <GoogleSyncBar />
       <SectionTitle>Letzte 2 Wochen – noch etwas offen?</SectionTitle>
       {past.length ? <CalendarDayList days={past} today={today} /> : <p className="px-1 text-ink-muted">Keine Einträge.</p>}
       <SectionTitle>Nächste 4 Wochen – was ist vorzubereiten?</SectionTitle>
@@ -159,7 +162,7 @@ export function WaitingStep() {
 
 /** Jedes aktive Projekt einzeln: Hat es einen nächsten Schritt? */
 export function ProjectsStep({ index, onIndex }: { index: number; onIndex: (index: number) => void }) {
-  const data = useData()
+  const data = usePlanningData()
   const today = useToday()
   const projects = sortActiveProjects(data.projects, data, today)
   if (projects.length === 0) return <EmptyState icon={<FolderKanban size={32} strokeWidth={1.5} />} title="Keine aktiven Projekte" />
@@ -190,7 +193,7 @@ export function ProjectsStep({ index, onIndex }: { index: number; onIndex: (inde
 }
 
 function ProjectReviewCard({ project }: { project: Project }) {
-  const data = useData()
+  const data = usePlanningData()
   const repo = useRepo()
   const today = useToday()
   const { toast } = useFeedback()
